@@ -75,8 +75,12 @@ class Credit_Debt():
 
 	def solution(self):
 		#print float(self.entries["What is your outstanding balance? "].get())
-		print type(int(self.var.get()))
-
+		months = float(self.var.get())
+		outstanding_balance = float(self.entries["What is your outstanding balance? "].get())
+		annual_interest_rate = float(self.entries["What is your annual interest rate? "].get())
+		print months
+		print outstanding_balance
+		print annual_interest_rate
 
 
 root = Tk()

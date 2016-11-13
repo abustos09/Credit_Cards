@@ -15,8 +15,9 @@ class Credit_Debt():
         self.buttonframe()
 
     def labelframe(self):
-        # "Payoff Calculator" and "What will it take to pay of my credit debt?"
-        # labels
+        """ 'Payoff Calculator' and 'What will it take to pay of my credit debt?''
+        labels
+        """
         label1 = Label(self.master, text = "Payoff Calculator", bg = "white", 
             anchor = "w", padx = 10, pady = 20, font = ("helvetica", 30))
         label1.pack(side = "top", fill = "x")
@@ -118,7 +119,6 @@ class Credit_Debt():
         previous_balance = self.outstanding_balance
         monthly_interest_rate = self.annual_interest_rate / 12.0
         minimum_monthly_payment = (monthly_upper_bound + monthly_lower_bound) / 2.0
-        a = None
 
         while previous_balance > epsilon:
             month += 1
