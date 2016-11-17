@@ -1,12 +1,19 @@
 
 from Tkinter import *
-import paying_debt_year_bisection
-import paying_debt_x_months
+import Main_creditcard_functions
 
 symbols = ("$", "%", "")
 dropdown_choices = (6, 12, 18, 24)
 fields = ("What is your outstanding balance? ", "What is your annual interest rate? ", 
     "How many months? ")
+solution_message = """*************RESULTS*************
+Monthly payment needed to pay off
+debt in %d months is $%s
+*
+Number of months needed: %d
+Balance: $%s
+
+"""
 
 class Credit_Debt():
     def __init__(self, master, fields, symbols):
@@ -17,7 +24,8 @@ class Credit_Debt():
         self.buttonframe()
 
     def labelframe(self):
-        """ 'Payoff Calculator' and 'What will it take to pay of my credit debt?''
+        """ 
+        'Payoff Calculator' and 'What will it take to pay of my credit debt?''
         labels
         """
         label1 = Label(self.master, text = "Payoff Calculator", bg = "white", 
@@ -63,13 +71,11 @@ class Credit_Debt():
         """
         self.solution_display = Text(self.master, width = 55, height = 15, 
             highlightbackground = "lightgrey")
-        self.solution_display.pack(side = "top")
+        self.solution_display.pack(side = "top", expand = True)
 
     def buttonframe(self):
-        """
-        'compute' button will call the solution method
-        """
-        
+        #'compute' button will call the solution method
+  
         button_frame = Frame(self.master, bg = "seagreen3")
         button_frame.pack(side = "bottom", fill = "both", pady = 4)
         
@@ -88,49 +94,30 @@ class Credit_Debt():
             ["What is your outstanding balance? "].get())
         self.annual_interest_rate = float(self.entries
             ["What is your annual interest rate? "].get())
-        
-##        ***"""
-##        might have to rework math for drop down to work:
-##        + monthly_lower_bound
-##        + monthly_upper_bound
-##        + paying_debt_year function 
-##        to take into account the months to pay this 
-##        amount off in as opposed to the 1 year that is
-##        currently being used
-##        """***
-##
-##        ***"""
-##        in importType branch
-##        """***
-##        
-        monthly_lower_bound = self.outstanding_balance / 12.0 # 12 is set because we are looking to pay this off in a year
+
+        monthly_lower_bound = self.outstanding_balance / self.months
         monthly_upper_bound = ((self.outstanding_balance * 
-            (1 + (self.annual_interest_rate / 12.0)) ** 12.0) / 12.0)
+            (1 + (self.annual_interest_rate / 12.0)) ** self.months) / self.months)
 
-
-        # call to paying_debt_year method
-        computation = paying_debt_year_bisection.paying_debt_year(monthly_lower_bound, 
-            monthly_upper_bound, self.outstanding_balance, 
-            self.annual_interest_rate, self.months)
-##        # call to paying_debt_x_months method
-##        computation = paying_debt_x_months.paying_debt_x_month(monthly_lower_bound, 
+##        # call to paying_debt_year method
+##        computation = Main_creditcard_functions.paying_debt_year(monthly_lower_bound, 
 ##            monthly_upper_bound, self.outstanding_balance, 
-##            self.annual_interest_rate, self.months)
+##            self.annual_interest_rate)
 
-##        ***"""
-##        Consolidate the files so that the 2x functions are imported from the 
-##        same file vs importing 2 diferent files
-##        """***
+        # call to paying_debt_x_months method
+        computation = Main_creditcard_functions.paying_debt_x_month( 
+            self.outstanding_balance, self.annual_interest_rate, 
+            self.months, monthly_lower_bound, monthly_upper_bound)
+        
+        # round to results to 2 decimel places
+        min_pay = round(computation[0],2)
+        bal = round(computation[2],2)
+        
+        # message printed to screen
+        sm = solution_message % (computation[1], min_pay, computation[1], bal)
 
-
-        sol_dis = """
-        *********RESULTS**********
-        Monthly payment to pay off debt in 1 year: %f
-        Number of months needed: %f
-        Balance: %f
-        """ % (computation[0], computation[1], computation[2])
-
-        self.solution_display.insert(END, sol_dis)
+        # updates text widget with the new message 
+        self.solution_display.insert(END, sm)
        
 root = Tk()
 root.geometry("500x600")
